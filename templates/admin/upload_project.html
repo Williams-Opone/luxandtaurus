@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin // Upload Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-600 font-['Inter'] antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+
+        {%include 'admin/sidebar.html'%}
+
+        <main class="flex-1 overflow-y-auto bg-gray-50 p-6 md:p-12 relative">
+            
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h1 class="text-3xl text-[#0F392B] font-bold uppercase tracking-tight">Upload Project</h1>
+                    <p class="text-gray-500 text-sm mt-1">Add a new case study to your portfolio.</p>
+                </div>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="mb-6 p-4 rounded bg-{{ 'emerald' if category == 'success' else 'red' }}-50 border border-{{ 'emerald' if category == 'success' else 'red' }}-200 text-{{ 'emerald' if category == 'success' else 'red' }}-700 text-sm">
+                      {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-3xl">
+                
+                <form action="/admin/upload-project" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">Project Title</label>
+                            <input type="text" name="title" required placeholder="e.g. Lux Agency Site"
+                                class="w-full bg-gray-50 border border-gray-200 rounded p-3 text-gray-800 focus:outline-none focus:border-[#0F392B] focus:ring-1 focus:ring-[#0F392B] transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">Category</label>
+                            <input type="text" name="category" required placeholder="e.g. Web Development"
+                                class="w-full bg-gray-50 border border-gray-200 rounded p-3 text-gray-800 focus:outline-none focus:border-[#0F392B] focus:ring-1 focus:ring-[#0F392B] transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">Tech Stack</label>
+                        <input type="text" name="tech_stack" required placeholder="Python, Flask, Tailwind CSS"
+                            class="w-full bg-gray-50 border border-gray-200 rounded p-3 text-gray-800 focus:outline-none focus:border-[#0F392B] focus:ring-1 focus:ring-[#0F392B] transition-all">
+                        <p class="text-xs text-gray-400 mt-1">Separate technologies with commas.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">Description</label>
+                        <textarea name="description" rows="4" required placeholder="Project details and features..."
+                            class="w-full bg-gray-50 border border-gray-200 rounded p-3 text-gray-800 focus:outline-none focus:border-[#0F392B] focus:ring-1 focus:ring-[#0F392B] transition-all"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">Live Link (Optional)</label>
+                        <input type="url" name="url" placeholder="https://..."
+                            class="w-full bg-gray-50 border border-gray-200 rounded p-3 text-gray-800 focus:outline-none focus:border-[#0F392B] focus:ring-1 focus:ring-[#0F392B] transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wide">Thumbnail Image</label>
+                        <div class="relative border-2 border-dashed border-gray-300 bg-gray-50 rounded-lg p-8 text-center hover:bg-gray-100 transition-colors cursor-pointer group">
+                            <input type="file" name="image" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <div class="text-gray-400 group-hover:text-[#0F392B] transition-colors">
+                                <i class="fas fa-cloud-upload-alt text-3xl mb-2"></i>
+                                <p class="text-sm font-medium">Click to upload or drag and drop</p>
+                                <p class="text-xs text-gray-400 mt-1">PNG, JPG up to 5MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100">
+                        <button type="submit" 
+                            class="px-8 py-3 bg-[#0F392B] text-white text-sm font-bold uppercase tracking-wider rounded hover:bg-[#16503d] shadow-lg hover:shadow-xl transition-all duration-300 transform active:scale-95">
+                            Deploy Project
+                        </button>
+                    </div>
+
+                </form>
+                <div class="mt-12">
+                    <div class="flex items-center gap-2 mb-4">
+                        <h2 class="text-xl text-[#0F392B] font-bold uppercase tracking-tight">Existing Projects</h2>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-[#0F392B] text-[10px] font-bold rounded-full">{{ projects|length }}</span>
+                    </div>
+                
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 font-semibold uppercase text-xs border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-4">Project</th>
+                                    <th class="px-6 py-4">Tech Stack</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {% for project in projects %}
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-800">{{ project.title }}</div>
+                                        <div class="text-xs text-gray-400">{{ project.category }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex flex-wrap gap-1">
+                                            {% for tech in project.tech_stack.split(',') %}
+                                            <span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">{{ tech.strip() }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex justify-end gap-4">
+                                            <button 
+                                                class="edit-btn text-emerald-600 hover:text-emerald-800 font-bold text-xs uppercase"
+                                                data-id="{{ project.id }}"
+                                                data-title="{{ project.title|e }}"
+                                                data-category="{{ project.category|e }}"
+                                                data-tech="{{ project.tech_stack|e }}"
+                                                data-url="{{ project.project_url|e }}"
+                                                data-desc="{{ project.description|e }}">
+                                                Edit
+                                            </button>
+                                            
+                                            <form action="/admin/upload-project" method="POST" onsubmit="return confirm('Delete this project forever?');" class="inline">
+                                                <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="project_id" value="{{ project.id }}">
+                                                <button type="submit" class="text-red-400 hover:text-red-600 font-bold text-xs uppercase">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all buttons with the 'edit-btn' class
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // 1. Extract data from the button's data attributes (set in your HTML)
+                    const id = this.dataset.id;
+                    const title = this.dataset.title;
+                    const category = this.dataset.category;
+                    const tech = this.dataset.tech;
+                    const url = this.dataset.url;
+                    const desc = this.dataset.desc;
+        
+                    // 2. Update UI Labels to show "Edit Mode"
+                    document.querySelector('h1').innerText = "Edit Project";
+                    const submitBtn = document.querySelector('button[type="submit"]');
+                    submitBtn.innerText = "Update Project";
+                    
+                    // Optional: Visual cue for edit mode (matches your emerald theme)
+                    submitBtn.classList.remove('bg-[#0F392B]');
+                    submitBtn.classList.add('bg-blue-700'); 
+        
+                    // 3. Handle the hidden project_id input
+                    let form = document.querySelector('form');
+                    let idInput = document.getElementById('project_id_input');
+                    
+                    // Create the hidden input field if it doesn't exist yet
+                    if (!idInput) {
+                        idInput = document.createElement('input');
+                        idInput.type = 'hidden';
+                        idInput.name = 'project_id';
+                        idInput.id = 'project_id_input';
+                        form.appendChild(idInput);
+                    }
+                    idInput.value = id;
+        
+                    // 4. Populate the form fields with existing project data
+                    document.getElementsByName('title')[0].value = title;
+                    document.getElementsByName('category')[0].value = category;
+                    document.getElementsByName('tech_stack')[0].value = tech;
+                    document.getElementsByName('url')[0].value = url;
+                    document.getElementsByName('description')[0].value = desc;
+        
+                    // 5. Make the image optional during an edit
+                    document.getElementsByName('image')[0].required = false;
+        
+                    // 6. Smooth scroll the window back to the top form
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        });
+        </script>
+</body>
+</html>

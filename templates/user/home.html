@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lux & Taurus | Premier Tech Agency</title>
+    <link rel="icon" type="image/png" href="lt.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Background Mesh for Aesthetic -->
+    <div class="bg-mesh"></div>
+
+    <!-- Navigation -->
+    {%include "user/header.html"%}
+
+    <!-- Hero Section -->
+    <section class="hero mt-20" id="#">
+        <div class="hero-content">
+            <span style="color: var(--accent-color); font-family: var(--font-heading); letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;">The Future of Tech</span>
+            <h1>DIGITAL<br>ARCHITECTURE<br><span class="text-accent">REDEFINED.</span></h1>
+            <p>We forge high-performance websites and digital experiences. Merging elegance with brute technical strength.</p>
+            <div style="margin-top: 30px;">
+                <a href="#contact" class="btn">Start Project</a>
+                <a href="#services" style="margin-left: 20px; border-bottom: 1px solid var(--accent-color); padding-bottom: 2px; font-size: 0.9rem;">View Services</a>
+            </div>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat">
+                <h3>150+</h3>
+                <p>Projects Shipped</p>
+            </div>
+            <div class="stat">
+                <h3>99%</h3>
+                <p>Client Retention</p>
+            </div>
+            <div class="stat">
+                <h3>24/7</h3>
+                <p>System Uptime</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services">
+        <div class="services-header">
+            <h2>OUR EXPERTISE</h2>
+            <p style="max-width: 400px; color: var(--text-muted);">We don't just write code; we engineer business solutions using cutting-edge stack technologies.</p>
+        </div>
+        
+        <div class="grid-container">
+            <!-- Service 1 -->
+            <div class="card">
+                <i class="fas fa-code card-icon"></i>
+                <h3>Web Development</h3>
+                <p>Custom, responsive websites built with clean code. We prioritize speed, SEO, and scalability.</p>
+                
+            </div>
+
+            <!-- Service 2 -->
+            <div class="card">
+                <i class="fas fa-layer-group card-icon"></i>
+                <h3>UI/UX Design</h3>
+                <p>User-centric interfaces that look stunning and function intuitively. Design that drives conversion.</p>
+                
+            </div>
+
+            <!-- Service 3 -->
+            <div class="card">
+                <i class="fas fa-rocket card-icon"></i>
+                <h3>Digital Strategy</h3>
+                <p>Comprehensive tech consulting to align your digital presence with your long-term business goals.</p>
+                
+            </div>
+
+             <!-- Service 4 -->
+             <div class="card">
+                <i class="fas fa-shopping-cart card-icon"></i>
+                <h3>E-Commerce</h3>
+                <p>Robust online stores designed to sell. Secure payment integration and seamless inventory management.</p>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- About/Feature Section -->
+    <section id="about" class="feature-section">
+        <div class="feature-image">
+            <!-- CSS Shapes handled in style -->
+        </div>
+        <div class="feature-content">
+            <span class="text-accent" style="font-family: var(--font-heading);">THE PHILOSOPHY</span>
+            <h2>LUX ET TAURUS</h2>
+            <p>
+                <strong>Lux (Light):</strong> We bring clarity to complex technology. We illuminate your brand's potential in a crowded digital space.
+            </p>
+            <p>
+                <strong>Taurus (Strength):</strong> We build with stability and power. Our back-end infrastructure is designed to withstand high traffic and resist security threats.
+            </p>
+            <a href="{{url_for('agency')}}" class="btn">Meet the Team</a>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="contact-container">
+            
+            <span class="text-accent" style="font-family: var(--font-heading); letter-spacing: 1px;">INITIATE PROTOCOL</span>
+            <h2>READY TO BUILD?</h2>
+            <p style="color: var(--text-muted);">Tell us about your project. We'll engineer the solution.</p>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" style="padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px; background-color: #1a1a1a; color: #00ffcc; border-color: #00ffcc;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form class="contact-form" method="post" action="{{ url_for('contact') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <input type="text" class="form-input" id="name"   name="name" placeholder=" "  required>
+                    <label for="name" class="form-label">Name / Company</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-input" id="email"  name="email" placeholder=" "  required>
+                    <label for="email" class="form-label">Email Address</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-input" id="service" name="service" placeholder=" " required>
+                    <label for="service" class="form-label">Service Required</label>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-input" id="message" name="message" placeholder=" " required></textarea>
+                    <label for="message" class="form-label">Project Details</label>
+                </div>
+                <button type="submit" class="btn btn-fill" style="margin-top: 20px; width: 100%;">Send Request</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {%include 'user/footer.html'%}
+
+    <script>
+        // Simple Mobile Menu Toggle
+        function toggleMenu() {
+            const nav = document.getElementById('nav-links');
+            nav.classList.toggle('active');
+        }
+
+        // Smooth scroll adjustment for sticky header
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Close mobile menu if open
+                document.getElementById('nav-links').classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin // Inquiries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-600 font-['Inter'] antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+
+        {%include 'admin/sidebar.html'%}
+
+        <main class="flex-1 overflow-y-auto bg-gray-50 p-6 md:p-12 relative">
+            
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h1 class="text-3xl text-[#0F392B] font-bold uppercase tracking-tight">Inbox</h1>
+                    <p class="text-gray-500 text-sm mt-1">Manage incoming project requests.</p>
+                </div>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-6 p-4 rounded bg-emerald-50 text-[#0F392B] border border-emerald-200 text-sm">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="h-12"></div>
+            
+            <div class="flex justify-between items-end mb-4">
+                <h2 class="text-xl text-[#0F392B] font-bold uppercase tracking-tight flex items-center gap-2">
+                    <i class="fas fa-database text-emerald-600"></i> Website Leads
+                </h2>
+            </div>
+            
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-12">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-50 text-gray-500 font-semibold uppercase text-xs border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4">Client</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Internal Notes</th>
+                            <th class="px-6 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for inquiry in inquiries %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-5">
+                                <div class="font-bold text-gray-800">{{ inquiry.name }}</div>
+                                <div class="text-xs text-gray-400">{{ inquiry.service_type }}</div>
+                            </td>
+                            
+                            <form action="{{ url_for('update_inquiry', inquiry_id=inquiry.id, page_token=request.args.get('page_token')) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+                                <td class="px-6 py-5">
+                                    <select name="status" class="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded p-1 focus:ring-1 focus:ring-emerald-500 outline-none">
+                                        <option value="New" {% if inquiry.status == 'New' %}selected{% endif %}>New</option>
+                                        <option value="Replied" {% if inquiry.status == 'Replied' %}selected{% endif %}>Replied</option>
+                                        <option value="Archived" {% if inquiry.status == 'Archived' %}selected{% endif %}>Archived</option>
+                                    </select>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <textarea name="notes" rows="1" class="w-full bg-transparent border-b border-gray-100 text-xs text-gray-500 focus:border-emerald-500 outline-none resize-none" placeholder="Add private notes...">{{ inquiry.notes or '' }}</textarea>
+                                </td>
+                                <td class="px-6 py-5 text-right">
+                                    <button type="submit" class="text-white bg-[#0F392B] px-3 py-1 rounded text-[10px] font-bold uppercase hover:bg-emerald-800 transition-all">
+                                        Save
+                                    </button>
+                                </td>
+                            </form>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-8 text-center text-gray-400 text-xs">No website leads found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <hr class="border-gray-100 mb-12">
+
+            <div class="flex justify-between items-end mb-4">
+                <h2 class="text-xl text-[#0F392B] font-bold uppercase tracking-tight flex items-center gap-2">
+                    <i class="fab fa-google text-emerald-600"></i> Direct Gmails
+                </h2>
+                <span class="text-xs text-gray-400">Syncing with {{ 'williamsopone3@gmail.com' }}</span>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                <table class="w-full text-left text-sm table-fixed">
+                    <thead class="bg-gray-50 text-gray-500 font-semibold uppercase text-xs border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 w-1/4">Sender</th>
+                            <th class="px-6 py-4 w-1/4">Subject</th>
+                            <th class="px-6 py-4 w-1/3">Snippet</th>
+                            <th class="px-6 py-4 w-1/6 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for email in gmails %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-5">
+                                <div class="font-bold text-gray-800 truncate">{{ email.sender }}</div>
+                                <div class="text-xs text-gray-400 truncate">{{ email.email }}</div>
+                            </td>
+                            <td class="px-6 py-5">
+                                <span class="text-gray-700 font-medium line-clamp-1">{{ email.subject }}</span>
+                            </td>
+                            <td class="px-6 py-5 text-gray-500 italic">
+                                <p class="truncate">{{ email.preview }}</p>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <button onclick="openModal('{{ email.sender }}', '{{ email.email }}', '{{ email.subject }}', `{{ email.body|replace('"', '&quot;') }}`)" 
+                                        class="text-emerald-600 hover:text-emerald-800 font-bold text-xs uppercase">
+                                    Read
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="p-3 bg-gray-100 rounded-full">
+                                            <i class="fab fa-google text-gray-400 text-xl"></i>
+                                        </div>
+                                        <p class="text-gray-500 text-sm">
+                                            No emails visible. You may need to sync your account.
+                                        </p>
+                                        
+                                        <a href="{{ url_for('connect_gmail') }}" 
+                                        class="px-6 py-2 bg-[#0F392B] hover:bg-emerald-800 text-white text-xs font-bold uppercase tracking-widest rounded shadow-md transition-all">
+                                            Sync Gmail Now
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between items-center">
+                    <p class="text-xs text-gray-500">Showing 7 entries per protocol</p>
+                    
+                    <div class="flex gap-2">
+                        {% if request.args.get('page_token') %}
+                            <a href="{{ url_for('admin_inquiries') }}" 
+                               class="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold rounded hover:bg-gray-100 transition-all">
+                               <i class="fas fa-chevron-left mr-1"></i> First Page
+                            </a>
+                        {% endif %}
+                
+                        {% if next_page %}
+                            <a href="{{ url_for('admin_inquiries', page_token=next_page) }}" 
+                               class="px-4 py-2 bg-[#0F392B] text-white text-xs font-bold rounded hover:bg-emerald-800 shadow-sm transition-all">
+                               Next 7 Emails <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="messageModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm transition-opacity">
+        <div class="bg-white w-full max-w-lg rounded-lg shadow-2xl p-8 transform transition-all scale-100 relative">
+            
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <div class="mb-6">
+                <span id="modalService" class="text-[#0F392B] text-xs font-bold uppercase tracking-widest border border-emerald-200 bg-emerald-50 px-2 py-1 rounded mb-4 inline-block">Service</span>
+                <h2 id="modalName" class="text-2xl font-bold text-gray-800 mb-1">Client Name</h2>
+                <a id="modalEmail" href="#" class="text-indigo-600 hover:underline text-sm block mb-6">client@email.com</a>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded border border-gray-100 text-gray-700 text-sm leading-relaxed mb-6 whitespace-pre-wrap" id="modalMessage">
+                </div>
+
+            <div class="flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2 text-gray-500 hover:text-gray-800 font-medium text-sm">Close</button>
+                <a id="replyBtn" href="#" class="px-6 py-2 bg-[#0F392B] hover:bg-[#16503d] text-white text-sm font-bold rounded shadow-md transition-colors">
+                    Reply via Email
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(name, email, service, message) {
+    document.getElementById('modalName').innerText = name;
+    document.getElementById('modalEmail').innerText = email;
+    document.getElementById('modalService').innerText = service;
+    document.getElementById('modalMessage').innerText = message;
+
+    // Use a clean search query for Gmail
+    const query = encodeURIComponent(`from:${email}`);
+    const gmailLink = `https://mail.google.com/mail/u/0/#search/${query}`;
+    
+    const replyBtn = document.getElementById('replyBtn');
+    replyBtn.href = gmailLink;
+    replyBtn.target = "_blank";
+    
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden';
+
+    document.getElementById('messageModal').classList.replace('hidden', 'flex');
+}
+
+function closeModal() {
+    document.body.style.overflow = 'auto';
+    document.getElementById('messageModal').classList.replace('flex', 'hidden');
+}
+    </script>
+</body>
+</html>

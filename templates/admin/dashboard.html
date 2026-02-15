@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin // Mission Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap');
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-600 font-['Inter'] antialiased">
+
+    <div class="flex h-screen overflow-hidden">
+
+        {%include 'admin/sidebar.html'%}
+
+        <main class="flex-1 overflow-y-auto bg-gray-50 p-6 md:p-12">
+            
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h1 class="text-3xl text-[#0F392B] font-bold uppercase tracking-tight">Mission Control</h1>
+                    <p class="text-gray-500 text-sm mt-1 font-mono">Welcome back, {{ admin_name }}.</p>
+                </div>
+                <a href="{{ url_for('upload_project') }}" class="bg-[#0F392B] hover:bg-[#16503d] text-white text-sm font-bold px-6 py-3 rounded shadow-lg hover:shadow-xl uppercase tracking-wider transition-all transform hover:-translate-y-0.5">
+                    + New Project
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white border border-gray-100 rounded-lg p-6 relative group hover:shadow-md transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Total Projects</span>
+                        <div class="p-2 bg-gray-50 rounded-md group-hover:bg-emerald-50 transition-colors">
+                            <i class="fas fa-code text-gray-400 group-hover:text-[#0F392B] transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 font-mono">{{ total_projects }}</div>
+                    <div class="mt-2 text-xs text-gray-400">Live in portfolio</div>
+                </div>
+
+                <div class="bg-white border border-gray-100 rounded-lg p-6 relative group hover:shadow-md transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Inquiries</span>
+                        <div class="p-2 bg-gray-50 rounded-md group-hover:bg-emerald-50 transition-colors">
+                            <i class="fas fa-inbox text-gray-400 group-hover:text-[#0F392B] transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 font-mono">{{ total_messages }}</div>
+                    <div class="mt-2 text-xs text-gray-400">Total leads received</div>
+                </div>
+
+                <div class="bg-white border border-gray-100 rounded-lg p-6 relative group hover:shadow-md transition-all">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-gray-400 text-xs uppercase tracking-widest font-semibold">Server Uptime</span>
+                        <div class="p-2 bg-gray-50 rounded-md group-hover:bg-emerald-50 transition-colors">
+                            <i class="fas fa-server text-gray-400 group-hover:text-[#0F392B] transition-colors"></i>
+                        </div>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 font-mono">99.9%</div>
+                    <div class="mt-2 text-xs text-emerald-600 font-medium">All systems operational</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <div>
+                    <h2 class="text-lg text-[#0F392B] font-bold uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <span class="w-1 h-4 bg-emerald-500 block"></span> Latest Leads
+                    </h2>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 font-mono text-xs uppercase border-b border-gray-100">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold">Client</th>
+                                    <th class="px-6 py-3 font-semibold">Service</th>
+                                    <th class="px-6 py-3 font-semibold text-right">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                {% for contact in recent_contacts %}
+                                <tr class="hover:bg-emerald-50/30 transition-colors group cursor-pointer">
+                                    <td class="px-6 py-4">
+                                        <div class="text-gray-800 font-medium group-hover:text-[#0F392B]">{{ contact.name }}</div>
+                                        <div class="text-gray-400 text-xs">{{ contact.email }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-500">
+                                        <span class="bg-gray-100 border border-gray-200 px-2 py-1 text-xs rounded-full group-hover:border-emerald-200 group-hover:bg-emerald-50 group-hover:text-[#0F392B] transition-colors">{{ contact.service_type }}</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right text-gray-400 font-mono text-xs">
+                                        {{ contact.date_sent.strftime('%b %d') }}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="px-6 py-8 text-center text-gray-400 italic">No inquiries yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="px-6 py-3 bg-gray-50 border-t border-gray-100 text-center">
+                            <a href="{{url_for('admin_inquiries')}}" class="text-xs text-gray-500 hover:text-[#0F392B] font-medium uppercase tracking-widest transition-colors">View All Messages →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-lg text-[#0F392B] font-bold uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <span class="w-1 h-4 bg-gray-300 block"></span> Recent Deployments
+                    </h2>
+
+                    <div class="space-y-4">
+                        {% for project in recent_projects %}
+                        <div class="bg-white border border-gray-200 p-4 flex gap-4 items-center group rounded-lg hover:shadow-md hover:border-emerald-200 transition-all">
+                            <div class="w-16 h-16 bg-gray-100 rounded flex-shrink-0 border border-gray-200 group-hover:border-emerald-200 transition-colors">
+                                <div class="w-full h-full flex items-center justify-center text-gray-400 font-mono text-xs">IMG</div>
+                            </div>
+                            
+                            <div class="flex-1">
+                                <h4 class="text-gray-800 font-bold group-hover:text-[#0F392B] transition-colors">{{ project.title }}</h4>
+                                <div class="text-gray-400 text-xs font-mono mt-1">{{ project.tech_stack }}</div>
+                            </div>
+
+                            <a href="{{ url_for('upload_project', edit_id=project.id) }}" class="text-gray-300 hover:text-[#0F392B] px-3 transition-colors">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </div>
+                        {% else %}
+                            <div class="text-gray-400 italic">No projects deployed yet.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>

@@ -1,8 +1,10 @@
 import os 
 from flask import jsonify
-SECRET_KEY = '89255d0f2a3859ded5b21e'
 
-SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:@127.0.0.1:3306/luxandtaurus'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -10,15 +12,15 @@ MAIL_SERVER='smtp.gmail.com'
 
 MAIL_PORT = 587
 
-MAIL_USERNAME='williamsopone3@gmail.com'
+MAIL_USERNAME = os.getenv('MAIL_USERNAME')
 
-MAIL_PASSWORD='ixzloikdmsrjydvh'
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
 MAIL_USE_TLS = True
 
 MAIL_USE_SSL = False
 
-MAIL_DEFAULT_SENDER = 'williamsopone3@gmail.com'
+
 
 # This allows the login to work on your local computer (http vs https)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'

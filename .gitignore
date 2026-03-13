@@ -1,0 +1,25 @@
+# Security & Credentials
+.env
+credentials.json
+ca.pem
+
+# Python Environment & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+vpro/
+venv/
+env/
+
+# Database
+*.sqlite3
+*.db
+
+# Static Assets (Optional)
+# Uncomment the line below if you don't want to upload project images to GitHub
+# static/project_images/
+
+# IDE & OS Files
+.vscode/
+.idea/
+.DS_Store

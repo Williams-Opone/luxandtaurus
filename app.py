@@ -1,12 +1,15 @@
 import sys
 import os
 
-# 1. This tells Python to look for the 'project' folder correctly
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# This forces Vercel to see the 'project' folder sitting right next to app.py
+sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-# 2. Import your app and db from the project folder
-from project import app, db
+try:
+    from project import app, db
+except ImportError:
+    # This is a backup in case Vercel's working directory is different
+    sys.path.append(os.getcwd())
+    from project import app, db
 
-# 3. Guard the run command so Vercel doesn't crash
 if __name__ == "__main__":
     app.run()
